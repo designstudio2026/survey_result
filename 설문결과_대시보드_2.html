@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>푸시 알림 사용자 경험 조사 — 결과 분석</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:#0F0E17;color:#FFFFFE;min-height:100vh;padding:2rem 1rem 4rem;}
+.wrap{max-width:900px;margin:0 auto;}
+
+/* 헤더 */
+.hero{text-align:center;padding:3rem 1rem 2.5rem;}
+.hero-label{font-size:11px;font-weight:700;letter-spacing:0.2em;color:#A7A9BE;text-transform:uppercase;margin-bottom:14px;}
+.hero-title{font-size:clamp(24px,5vw,42px);font-weight:900;color:#FFFFFE;line-height:1.2;margin-bottom:10px;}
+.hero-title span{color:#FF8906;}
+.hero-sub{font-size:14px;color:#A7A9BE;margin-bottom:1.5rem;}
+.hero-meta{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;}
+.meta-chip{background:#1E1E2E;border:1px solid #2E2E4E;border-radius:99px;padding:6px 18px;font-size:13px;color:#A7A9BE;}
+.meta-chip strong{color:#FF8906;}
+
+/* 섹션 */
+.section{margin-bottom:2.5rem;}
+.section-title{font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#A7A9BE;margin-bottom:1rem;padding-left:2px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:'';flex:1;height:1px;background:#2E2E4E;}
+
+/* 카드 */
+.card{background:#1E1E2E;border:1px solid #2E2E4E;border-radius:16px;padding:1.5rem;margin-bottom:1rem;}
+.card-title{font-size:13px;font-weight:700;color:#A7A9BE;margin-bottom:4px;}
+.card-q{font-size:15px;font-weight:700;color:#FFFFFE;margin-bottom:1.25rem;line-height:1.4;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+@media(max-width:600px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+/* 바 차트 */
+.bar-item{margin-bottom:10px;}
+.bar-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.bar-label{font-size:13px;color:#FFFFFE;}
+.bar-count{font-size:12px;color:#A7A9BE;font-weight:700;}
+.bar-track{height:8px;background:#2E2E4E;border-radius:99px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;transition:width 0.6s cubic-bezier(.4,0,.2,1);}
+
+/* 도넛 차트 */
+.donut-wrap{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
+.donut-svg{flex-shrink:0;}
+.donut-legend{flex:1;min-width:120px;}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* 통계 카드 */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1rem;}
+.stat-box{background:#2E2E4E;border-radius:12px;padding:14px 16px;text-align:center;}
+.stat-num{font-size:28px;font-weight:900;color:#FF8906;}
+.stat-lbl{font-size:11px;color:#A7A9BE;margin-top:3px;}
+
+/* 선호도 바 */
+.pref-item{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.pref-label{font-size:12px;color:#A7A9BE;width:130px;flex-shrink:0;line-height:1.3;}
+.pref-bars{flex:1;display:flex;flex-direction:column;gap:4px;}
+.pref-bar-row{display:flex;align-items:center;gap:6px;}
+.pref-bar-track{flex:1;height:6px;background:#2E2E4E;border-radius:99px;overflow:hidden;}
+.pref-bar-fill{height:100%;border-radius:99px;}
+.pref-cnt{font-size:11px;color:#A7A9BE;min-width:28px;text-align:right;}
+.pref-badge{font-size:10px;padding:2px 6px;border-radius:99px;font-weight:700;}
+
+/* 텍스트 목록 */
+.text-list{max-height:280px;overflow-y:auto;padding-right:4px;}
+.text-list::-webkit-scrollbar{width:4px;}
+.text-list::-webkit-scrollbar-track{background:#2E2E4E;border-radius:99px;}
+.text-list::-webkit-scrollbar-thumb{background:#FF8906;border-radius:99px;}
+.text-item{font-size:13px;color:#FFFFFE;padding:8px 0;border-bottom:1px solid #2E2E4E;line-height:1.5;}
+.text-item:last-child{border-bottom:none;}
+.text-num{color:#FF8906;font-weight:700;margin-right:6px;}
+
+/* 인사이트 */
+.insight-box{background:linear-gradient(135deg,#FF8906,#E53170);border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;}
+.insight-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:4px;}
+.insight-text{font-size:14px;color:#fff;font-weight:500;line-height:1.6;}
+
+/* 탭 */
+.tab-row{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.tab-btn{padding:6px 16px;border-radius:99px;border:1px solid #2E2E4E;background:none;color:#A7A9BE;font-size:12px;font-family:inherit;cursor:pointer;transition:all 0.15s;}
+.tab-btn.on{background:#FF8906;border-color:#FF8906;color:#0F0E17;font-weight:700;}
+.tab-btn:hover:not(.on){background:#2E2E4E;color:#FFFFFE;}
+.tab-content{display:none;}
+.tab-content.on{display:block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <p class="hero-label">Research Report · 2026</p>
+  <h1 class="hero-title">푸시 알림<br><span>사용자 경험 조사</span> 결과</h1>
+  <p class="hero-sub">쇼핑 앱 푸시 알림에 대한 인식, 선호도, 비교 분석</p>
+  <div class="hero-meta">
+    <span class="meta-chip">총 응답자 <strong>129명</strong></span>
+    <span class="meta-chip">문항 수 <strong>21개</strong></span>
+    <span class="meta-chip">인터뷰 참여 의향 <strong>55명</strong></span>
+  </div>
+</div>
+
+<!-- 기본 정보 -->
+<div class="section">
+  <p class="section-title">기본 정보</p>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Q1</div>
+      <div class="card-q">성별</div>
+      <div class="donut-wrap">
+        <svg class="donut-svg" width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#2E2E4E" stroke-width="16"/>
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#E53170" stroke-width="16"
+            stroke-dasharray="208.5 238.5" stroke-dashoffset="59.7" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#FF8906" stroke-width="16"
+            stroke-dasharray="40.5 238.5" stroke-dashoffset="-148.8" stroke-linecap="round"/>
+          <text x="50" y="46" text-anchor="middle" font-size="13" font-weight="900" fill="#FFFFFE" font-family="Noto Sans KR">129</text>
+          <text x="50" y="60" text-anchor="middle" font-size="9" fill="#A7A9BE" font-family="Noto Sans KR">명</text>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#E53170"></div><span>여 <strong>108명</strong> (83.7%)</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#FF8906"></div><span>남 <strong>21명</strong> (16.3%)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Q2</div>
+      <div class="card-q">연령대</div>
+      <div id="chart-q02"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 쇼핑 앱 이용 -->
+<div class="section">
+  <p class="section-title">쇼핑 앱 이용 행태</p>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Q3</div>
+      <div class="card-q">한 달 쇼핑 앱 이용 빈도</div>
+      <div id="chart-q03"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Q4</div>
+      <div class="card-q">푸시 알림 설정 여부</div>
+      <div id="chart-q04"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Q5 · 복수 선택</div>
+    <div class="card-q">알림을 켜두는 주요 이유</div>
+    <div id="chart-q05"></div>
+  </div>
+</div>
+
+<!-- 알림 인식 -->
+<div class="section">
+  <p class="section-title">푸시 알림 인식</p>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Q6</div>
+      <div class="card-q">평소 쇼핑 앱 알림을 어떻게 느끼십니까?</div>
+      <div id="chart-q06"></div>
+      <div class="insight-box" style="margin-top:1rem;">
+        <div class="insight-label">핵심 인사이트</div>
+        <div class="insight-text">응답자의 <strong>59.1%</strong>가 알림을 부정적으로 느끼며, 긍정 응답은 <strong>17.8%</strong>에 불과</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Q7 · 복수 선택</div>
+      <div class="card-q">알림을 해제하는 가장 큰 이유</div>
+      <div id="chart-q07"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Q10</div>
+    <div class="card-q">알림을 받았을 때 열람 빈도</div>
+    <div id="chart-q10"></div>
+    <div class="insight-box" style="margin-top:1rem;">
+      <div class="insight-label">핵심 인사이트</div>
+      <div class="insight-text">응답자의 <strong>74.4%</strong>가 알림을 거의/전혀 열지 않음 — 알림 피로도가 매우 높음</div>
+    </div>
+  </div>
+</div>
+
+<!-- 주관식 -->
+<div class="section">
+  <p class="section-title">주관식 응답</p>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Q8 · 주관식</div>
+      <div class="card-q">알림이 '도움이 된다'고 느끼는 경우</div>
+      <div class="text-list" id="list-q08"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Q9 · 주관식</div>
+      <div class="card-q">알림이 '불편하다'고 느끼는 경우</div>
+      <div class="text-list" id="list-q09"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 선호도 조사 -->
+<div class="section">
+  <p class="section-title">선호도 조사 결과</p>
+  <div class="card">
+    <div class="card-q">알림 유형별 선호도 — 1순위 / 2순위 / 비선호</div>
+    <p style="font-size:12px;color:#A7A9BE;margin-bottom:1.25rem;">🟠 1순위 · 🟢 2순위 · 🔴 비선호</p>
+    <div id="chart-pref"></div>
+    <div class="insight-box" style="margin-top:1rem;">
+      <div class="insight-label">핵심 인사이트</div>
+      <div class="insight-text"><strong>알림3 (정중체·이름 포함)</strong>이 1순위 51.2%로 압도적 선호 — 이름을 포함한 정중한 말투가 가장 효과적. <strong>알림6 (친근체·이름 포함)</strong>은 비선호 1위(55.0%) — 친근한 말투에 이름을 넣으면 역효과</div>
+    </div>
+  </div>
+</div>
+
+<!-- 비교 설문 -->
+<div class="section">
+  <p class="section-title">비교 설문</p>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Q15</div>
+      <div class="card-q">비교 대상으로 선택한 앱 유형</div>
+      <div id="chart-q15"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Q17</div>
+      <div class="card-q">비교 앱 대비 쇼핑 앱 알림의 도움도</div>
+      <div id="chart-q17"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Q16 · 복수 선택</div>
+    <div class="card-q">비교 앱 대비 쇼핑 앱 알림의 느낌</div>
+    <div id="chart-q16"></div>
+    <div class="insight-box" style="margin-top:1rem;">
+      <div class="insight-label">핵심 인사이트</div>
+      <div class="insight-text">응답자의 <strong>58.9%</strong>가 쇼핑 앱 알림을 "더 광고 같다"고 평가 — 타 앱 대비 광고성이 강하게 인식됨</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Q18 · 주관식</div>
+    <div class="card-q">쇼핑 앱 알림만의 특성</div>
+    <div class="text-list" id="list-q18"></div>
+  </div>
+</div>
+
+<!-- 마무리 -->
+<div class="section">
+  <p class="section-title">마무리</p>
+  <div class="card">
+    <div class="card-title">Q19</div>
+    <div class="card-q">후속 인터뷰 참여 의향</div>
+    <div class="donut-wrap">
+      <svg class="donut-svg" width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="38" fill="none" stroke="#2E2E4E" stroke-width="16"/>
+        <circle cx="50" cy="50" r="38" fill="none" stroke="#FF8906" stroke-width="16"
+          stroke-dasharray="133.7 238.5" stroke-dashoffset="59.7" stroke-linecap="round"/>
+        <circle cx="50" cy="50" r="38" fill="none" stroke="#2E2E4E" stroke-width="16"
+          stroke-dasharray="179.8 238.5" stroke-dashoffset="-74" stroke-linecap="round"/>
+        <text x="50" y="46" text-anchor="middle" font-size="13" font-weight="900" fill="#FFFFFE" font-family="Noto Sans KR">55</text>
+        <text x="50" y="60" text-anchor="middle" font-size="9" fill="#A7A9BE" font-family="Noto Sans KR">명 참여</text>
+      </svg>
+      <div class="donut-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#FF8906"></div><span>예 <strong>55명</strong> (42.6%)</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2E2E4E;border:1px solid #A7A9BE;"></div><span>아니오 <strong>74명</strong> (57.4%)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+const TOTAL = 129;
+const C = ['#FF8906','#E53170','#0F3460','#A7A9BE','#F25F4C','#6D6A75'];
+const ACCENT = ['#FF8906','#E53170','#7B2D8B','#0F3460','#F25F4C','#6D6A75'];
+
+function barChart(containerId, data, total, colors, maxVal) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const entries = Object.entries(data).sort((a,b) => b[1]-a[1]);
+  const max = maxVal || Math.max(...entries.map(e=>e[1]));
+  el.innerHTML = entries.map(([label, cnt], i) => {
+    const pct = Math.round(cnt/total*100);
+    const w = Math.round(cnt/max*100);
+    const color = Array.isArray(colors) ? (colors[i] || colors[colors.length-1]) : colors;
+    return `<div class="bar-item">
+      <div class="bar-label-row">
+        <span class="bar-label">${label}</span>
+        <span class="bar-count">${cnt}명 (${pct}%)</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${w}%;background:${color};"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function textList(containerId, items) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = items.map((t,i) =>
+    `<div class="text-item"><span class="text-num">${i+1}.</span>${t}</div>`
+  ).join('');
+}
+
+// Q2 연령대
+barChart('chart-q02', {"20대":66,"10대":35,"50대 이상":19,"40대":5,"30대":4}, TOTAL,
+  ['#FF8906','#E53170','#7B2D8B','#0F3460','#F25F4C']);
+
+// Q3 이용 빈도
+barChart('chart-q03', {"월 1~2회":47,"주 2~3회":33,"주 1회 정도":19,"거의 매일":16,"거의 이용 안 함":14}, TOTAL,
+  ['#FF8906','#E53170','#7B2D8B','#0F3460','#F25F4C']);
+
+// Q4 알림 설정
+barChart('chart-q04', {"거의 꺼둠":53,"일부 앱만 켜둠":47,"대부분 켜둠":27,"잘 모름":2}, TOTAL,
+  ['#E53170','#FF8906','#0F3460','#A7A9BE']);
+
+// Q5 수신 이유
+barChart('chart-q05', {"배송 / 주문 상태":82,"할인 / 쿠폰":77,"이벤트 / 프로모션":52,"재입고 / 품절 해제":40,"추천 상품":10}, TOTAL,
+  '#FF8906');
+
+// Q6 알림 인식
+barChart('chart-q06', {"다소 불편하다":60,"보통이다":30,"유용한 편이다":23,"매우 불편하다":16}, TOTAL,
+  ['#E53170','#A7A9BE','#FF8906','#F25F4C']);
+
+// Q7 해제 이유
+barChart('chart-q07', {"너무 자주 옴":113,"내용이 별로 유용하지 않음":89,"말투가 부담스러움":8,"기타":3,"내용이 사생활 침해처럼 느껴짐":2,"이모지나 표현이 어색함":2,"끄지 않음":1}, TOTAL,
+  '#E53170');
+
+// Q10 열람 빈도
+barChart('chart-q10', {"거의 열지 않음":79,"종종 열어봄":28,"전혀 열지 않음":17,"대부분 열어봄":5}, TOTAL,
+  ['#E53170','#FF8906','#F25F4C','#0F3460']);
+
+// Q8, Q9, Q18 주관식
+textList('list-q08', ["관심 있던 상품의 할인 정보를 받았을 때","배송 완료 알림","위시 상품이 재입고 될 때","원하던 품절 상품의 재입고 알림","재입고나 품절 해제 알림, 배송 현황 알려줄 때","할인 정보 알려줄 때","관심 상품이 할인에 들어가거나 카드 할인 등 결제 혜택을 알려줄 때","나와 비슷한 스타일의 옷을 추천해 줄 때","광고 아닌 진짜 할인 등 유용한 정보가 있을 때","배송 현황 알림 / 재입고 알림","기한이 얼마 남지 않은 이벤트나 쿠폰 리마인드 역할을 할 때","내가 장바구니에 담아놓은 제품이 재고가 얼마 남지 않았다고 뜰 때","나에게 적합한 프로모션이나 가격 인하에 대해 알려줄 때","소멸 예정 쿠폰 알림, 재입고 알림","배달시킨 물품의 도착 알림","무신사 세일 같이 할인폭이 큰 세일을 할 때 알려줌","선착순 쿠폰","타임세일 등"]);
+
+textList('list-q09', ["내가 필요 없는 정보가 너무 자주 올 때","이벤트에 당첨되었다고 하면서 거짓 알림을 보내는 방식이 불쾌","그저 광고 알림인데 당첨이라며 호들갑 떨거나, 내가 필요한 알림을 볼 수 없을 정도로 광고가 자주 올 때","별거 아닌 내용을 과장하거나 나에겐 불필요한 이벤트 알림을 너무 자주 줄 때","광고성 쿠폰 알림이 너무 많이 떠서 다른 알림이 묻힐 때","100원 에어팟 같은 어그로성 문구의 낚시 알림","관심 없는 상품의 할인 홍보가 자주 올 때","같은 내용의 알림이 지속적으로 반복될 때","너무 부담스러운 양의 알림이 올 때","내 이름을 부를 때 가끔 당황스럽게 느껴짐","관심 없는 브랜드 소식이나 품절 임박을 과하게 알려줄 때","반복 알림으로 들어가 보면 이미 소진된 상태일 때","사용자 맥락을 고려하지 않은 무조건적인 홍보 알림","잦은 알림이 일상에 방해가 될 때","알림창이 쓸데없는 알림으로 가득해 중요한 연락이 묻힐 때"]);
+
+textList('list-q18', ["최근 구매 성향과 할인 혜택을 파악해 제시해 주지만 광고 빈도가 높다","부담스러운 말투, 어그로성 문구","너무 자주 오고 별로 궁금하지 않은 이벤트까지 알림이 온다","빈도가 너무 잦고 낚시형 알림이 많다","쇼핑 앱은 이벤트 당첨이라는 문구로 유도하지만 실제로는 일반 이벤트 홍보인 경우가 많아 낚시성이 많다","광고와 불필요한 정보가 너무 많아 필요한 정보와 구분이 어렵다","정작 나에게 필요한 정보는 주지 않고 관심 없는 상품을 팔아치우려는 느낌","OTT는 이미 돈을 지불한 경우이고, 쇼핑 앱은 사용자가 돈을 더 쓰게 만들어야 하는 구조라 알림이 더 많이 온다","언어 학습 앱 알림은 오히려 반가운 반면 쇼핑 앱은 빈도가 너무 잦아 부담스럽다","SNS는 세부 사항별로 알림을 제어할 수 있는데 쇼핑 앱은 앱 알림 자체를 꺼야 해서 필요한 정보도 놓치는 경우가 있다","친근한 말투를 많이 사용하는 것 같다","너무 상업적이다 / 소비를 강요하는 듯한 느낌","구매 욕구를 자극하는 멘트가 많다"]);
+
+// 선호도 차트
+(function() {
+  const el = document.getElementById('chart-pref');
+  const notifs = [
+    {label:'알림1\n정중체·일반',     p1:30, p2:55, pW:11},
+    {label:'알림2\n정중체·인구통계', p1:20, p2:24, pW:2},
+    {label:'알림3\n정중체·이름',     p1:66, p2:28, pW:5},
+    {label:'알림4\n친근체·일반',     p1:4,  p2:6,  pW:12},
+    {label:'알림5\n친근체·인구통계', p1:1,  p2:8,  pW:28},
+    {label:'알림6\n친근체·이름',     p1:8,  p2:8,  pW:71},
+  ];
+  const maxV = 80;
+  el.innerHTML = notifs.map(n => {
+    const w1 = Math.round(n.p1/maxV*100);
+    const w2 = Math.round(n.p2/maxV*100);
+    const wW = Math.round(n.pW/maxV*100);
+    return `<div class="pref-item">
+      <div class="pref-label">${n.label.replace('\n','<br>')}</div>
+      <div class="pref-bars">
+        <div class="pref-bar-row">
+          <div class="pref-bar-track"><div class="pref-bar-fill" style="width:${w1}%;background:#FF8906;"></div></div>
+          <span class="pref-cnt">${n.p1}</span>
+        </div>
+        <div class="pref-bar-row">
+          <div class="pref-bar-track"><div class="pref-bar-fill" style="width:${w2}%;background:#1D9E75;"></div></div>
+          <span class="pref-cnt">${n.p2}</span>
+        </div>
+        <div class="pref-bar-row">
+          <div class="pref-bar-track"><div class="pref-bar-fill" style="width:${wW}%;background:#E53170;"></div></div>
+          <span class="pref-cnt">${n.pW}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+})();
+
+// Q15 비교앱
+barChart('chart-q15', {"SNS / 커뮤니티":51,"배달":39,"금융":17,"OTT":15,"언어 학습":5,"기타":2}, TOTAL,
+  ['#FF8906','#E53170','#7B2D8B','#0F3460','#F25F4C','#A7A9BE']);
+
+// Q16 비교 느낌
+barChart('chart-q16', {"더 광고 같다":76,"더 자주 온다":48,"더 부담스럽다":35,"차이가 없다":14,"더 친근하다":9,"더 유용하다":7,"더 사생활 침해처럼 느껴진다":7,"기타":2}, TOTAL,
+  '#E53170');
+
+// Q17 비교 도움도
+barChart('chart-q17', {"다소 도움이 되지 않는다":52,"보통이다":46,"전혀 도움이 되지 않는다":17,"다소 도움이 된다":14}, TOTAL,
+  ['#E53170','#A7A9BE','#F25F4C','#FF8906']);
+
+</script>
+</body>
+</html>
